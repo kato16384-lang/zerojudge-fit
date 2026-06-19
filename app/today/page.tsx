@@ -9,6 +9,7 @@ export default function TodayPage() {
   const [day, setDay] = useState(1);
 
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [pullupReps, setPullupReps] = useState(10);
 
  useEffect(() => {
   const savedBenchMax = localStorage.getItem("benchMax");
@@ -16,6 +17,7 @@ export default function TodayPage() {
   const savedDeadliftMax = localStorage.getItem("deadliftMax");
   const savedDay = localStorage.getItem("day");
   const savedCheckedItems = localStorage.getItem("checkedItems");
+  const savedPullupReps = localStorage.getItem("pullupReps");
 
   if (savedBenchMax) setBenchMax(Number(savedBenchMax));
   if (savedSquatMax) setSquatMax(Number(savedSquatMax));
@@ -25,6 +27,9 @@ export default function TodayPage() {
   if (savedCheckedItems) {
     setCheckedItems(JSON.parse(savedCheckedItems));
   }
+  if (savedPullupReps) {
+  setPullupReps(Number(savedPullupReps));
+}
 }, []);
 
  const benchWeight = Math.round(benchMax * 0.85);
@@ -168,14 +173,25 @@ const completeWorkout = () => {
 
       {day === 3 && (
   <>
-    <label>
-      <input
-        type="checkbox"
-        checked={checkedItems.includes("pullup")}
-        onChange={() => toggleItem("pullup")}
-      />
-      懸垂 10回 × 4set
-    </label>
+  <label>
+  <input
+    type="checkbox"
+    checked={checkedItems.includes("pullup")}
+    onChange={() => toggleItem("pullup")}
+  />
+  懸垂
+  <input
+    type="number"
+    value={pullupReps}
+    onChange={(e) => {
+      const value = Number(e.target.value);
+      setPullupReps(value);
+      localStorage.setItem("pullupReps", String(value));
+    }}
+    style={{ width: "50px", marginLeft: "8px" }}
+  />
+  回 × 4set
+</label>
     <br />
 
     <label>
