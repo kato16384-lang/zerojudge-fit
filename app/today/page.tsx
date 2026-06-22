@@ -18,14 +18,26 @@ export default function TodayPage() {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [pullupReps, setPullupReps] = useState(10);
   const [backType, setBackType] = useState("A");
+
   useEffect(() => {
     const savedBenchMax = localStorage.getItem("benchMax");
     const savedSquatMax = localStorage.getItem("squatMax");
     const savedDeadliftMax = localStorage.getItem("deadliftMax");
     const savedDay = localStorage.getItem("day");
     const savedGoal = localStorage.getItem("goal");
-    const savedFrequency = localStorage.getItem("frequency");
     const savedDays = localStorage.getItem("days");
+    if (savedDays) {
+      const parsedDays = JSON.parse(savedDays);
+
+      setDays(parsedDays);
+
+
+      if (parsedDays.length === 2) {
+        setFrequency("2");
+      } else {
+        setFrequency("3");
+      }
+    }
     const savedCheckedItems = localStorage.getItem("checkedItems");
     const savedPullupReps = localStorage.getItem("pullupReps");
     const savedBackType = localStorage.getItem("backType");
@@ -36,7 +48,6 @@ export default function TodayPage() {
     if (savedDeadliftMax) setDeadliftMax(Number(savedDeadliftMax));
     if (savedDay) setDay(Number(savedDay));
     if (savedGoal) setGoal(savedGoal);
-    if (savedFrequency) setFrequency(savedFrequency);
     if (savedDays) {
       setDays(JSON.parse(savedDays));
     }
@@ -94,6 +105,21 @@ export default function TodayPage() {
       : day === 3
         ? 1
         : day + 1;
+  let nextRecommendedDay = "";
+
+  if (frequency === "2") {
+    nextRecommendedDay =
+      nextDay === 1
+        ? days[0]
+        : days[1];
+  } else {
+    nextRecommendedDay =
+      nextDay === 1
+        ? days[0]
+        : nextDay === 2
+          ? days[1]
+          : days[2];
+  }
 
   const estimatedTime =
     frequency === "2"
@@ -107,6 +133,30 @@ export default function TodayPage() {
           : backType === "A"
             ? 30
             : 20;
+
+  const Exercise = ({
+    id,
+    name,
+    detail,
+  }: {
+    id: string;
+    name: string;
+    detail: string;
+  }) => (
+    <label style={{ display: "block", marginBottom: "16px" }}>
+      <input
+        type="checkbox"
+        checked={checkedItems.includes(id)}
+        onChange={() => toggleItem(id)}
+      />
+
+      <div style={{ marginLeft: "24px" }}>
+        {name}
+        <br />
+        {detail}
+      </div>
+    </label>
+  );
 
   const toggleItem = (item: string) => {
     let updatedItems: string[];
@@ -149,6 +199,7 @@ export default function TodayPage() {
       <h1>今日のメニュー（Day{day}）</h1>
 
       <p>次回：Day{nextDay}</p>
+      <p>推奨日：{nextRecommendedDay}</p>
 
       <p>推定時間：{estimatedTime}分</p>
 
@@ -178,222 +229,147 @@ export default function TodayPage() {
 
       {day === 1 && frequency === "3" && (
         <>
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("bench")}
-              onChange={() => toggleItem("bench")}
-            />
-            ベンチプレス {benchWeight}kg × {reps}回 × {sets}set
-          </label>
+          <Exercise
+            id="bench"
+            name="ベンチプレス"
+            detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("incline")}
-              onChange={() => toggleItem("incline")}
-            />
-            インクラインダンベルプレス 22kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="incline"
+            name="インクラインダンベルプレス"
+            detail={`22kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("dips")}
-              onChange={() => toggleItem("dips")}
-            />
-            ディップス  {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="dips"
+            name="ディップス"
+            detail={`${accessoryReps}回 x ${accessorySets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("lying")}
-              onChange={() => toggleItem("lying")}
-            />
-            ライイングエクステンション 25kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="lying"
+            name="ライイングエクステンション"
+            detail={`25kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("narrow")}
-              onChange={() => toggleItem("narrow")}
-            />
-            ナローベンチプレス 50kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="narrow"
+            name="ナローベンチプレス"
+            detail={`50kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
         </>
       )}
       {day === 1 && frequency === "2" && (
         <>
-
-          <input
-            type="checkbox"
-            checked={checkedItems.includes("bench")}
-            onChange={() => toggleItem("bench")}
+          <Exercise
+            id="bench"
+            name="ベンチプレス"
+            detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
           />
-          <>
-            ベンチプレス
-            <br />
-            {benchWeight}kg × {reps}回 × {sets}set
-          </>
-
-
-
 
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("pullup")}
-              onChange={() => toggleItem("pullup")}
-            />
-            懸垂
-            <br />
-            {pullupReps}回 × 4set
-          </label>
+          <Exercise
+            id="pullup"
+            name="懸垂"
+            detail={`${pullupReps}回 x 4set`}
+          />
 
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("dips")}
-              onChange={() => toggleItem("dips")}
-            />
-
-            ディップス
-            <br />
-
-            {accessoryReps}回 × {accessorySets}set
-          </label>
-
+          <Exercise
+            id="dips"
+            name="ディップス"
+            detail={`${accessoryReps}回 x ${accessorySets}set`}
+          />
         </>
       )}
 
       {day === 2 && (
         <>
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("squat")}
-              onChange={() => toggleItem("squat")}
-            />
-            スクワット {squatWeight}kg × {reps}回 × {sets}set
-          </label>
+          <Exercise
+            id="squat"
+            name="スクワット"
+            detail={`${squatWeight}kg x ${reps}回 x ${sets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("extension")}
-              onChange={() => toggleItem("extension")}
-            />
-            レッグエクステンション 40kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="extension"
+            name="レッグエクステンション"
+            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+
+          <br />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("curl")}
-              onChange={() => toggleItem("curl")}
-            />
-            レッグカール 40kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="curl"
+            name="レッグカール"
+            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("bulgarian")}
-              onChange={() => toggleItem("bulgarian")}
-            />
-            ブルガリアンスクワット  {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="bulgarian"
+            name="ブルガリアンスクワット"
+            detail={`${accessoryReps}回 x ${accessorySets}set`}
+          />
         </>
       )}
 
       {day === 3 && backType === "A" && (
         <>
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("pullup")}
-              onChange={() => toggleItem("pullup")}
-            />
-            懸垂
-            <input
-              type="number"
-              value={pullupReps}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                setPullupReps(value);
-                localStorage.setItem("pullupReps", String(value));
-              }}
-              style={{ width: "50px", marginLeft: "8px" }}
-            />
-            回 × 4set
-          </label>
+          <Exercise
+            id="pullup"
+            name="懸垂"
+            detail={`${pullupReps}回 x 4set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("latpull")}
-              onChange={() => toggleItem("latpull")}
-            />
-            ラットプル 80kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="latpull"
+            name="ラットプル"
+            detail={`80kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("ezcurl")}
-              onChange={() => toggleItem("ezcurl")}
-            />
-            EZバーカール 40kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="ezcurl"
+            name="EZバーカール"
+            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("hammer")}
-              onChange={() => toggleItem("hammer")}
-            />
-            ハンマーカール 16kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="hammer"
+            name="ハンマーカール"
+            detail={`16kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
         </>
       )}
 
       {day === 3 && backType === "B" && (
         <>
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("deadlift")}
-              onChange={() => toggleItem("deadlift")}
-            />
-            デッドリフト {deadliftWeight}kg × {reps}回 × {sets}set
-          </label>
+          <Exercise
+            id="deadlift"
+            name="デッドリフト"
+            detail={`${deadliftWeight}kg x ${reps}回 x ${sets}set`}
+          />
 
           <br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={checkedItems.includes("row")}
-              onChange={() => toggleItem("row")}
-            />
-            シーテッドロー 50kg × {accessoryReps}回 × {accessorySets}set
-          </label>
+          <Exercise
+            id="row"
+            name="シーテッドロー"
+            detail={`50kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
         </>
       )}
 
