@@ -75,25 +75,35 @@ export default function SetupPage() {
       <h1>目標設定</h1>
 
       <p>ベンチプレスMAX</p>
-      <input value={benchMax} onChange={(e) => setBenchMax(e.target.value)} />
+      <input
+        type="number"
+        value={benchMax}
+        onChange={(e) => setBenchMax(e.target.value)}
+      />
 
       <p>スクワットMAX</p>
-      <input value={squatMax} onChange={(e) => setSquatMax(e.target.value)} />
+      <input
+        type="number"
+        value={squatMax}
+        onChange={(e) => setSquatMax(e.target.value)}
+      />
 
       <p>デッドリフトMAX</p>
       <input
+        type="number"
         value={deadliftMax}
         onChange={(e) => setDeadliftMax(e.target.value)}
       />
 
       <p>懸垂回数</p>
       <input
+        type="number"
         value={pullupReps}
         onChange={(e) => setPullupReps(e.target.value)}
       />
-      <p>目標</p>
+      <h2>目標</h2>
 
-      <label>
+      <label style={{ display: "block", marginBottom: "8px" }}>
         <input
           type="radio"
           name="goal"
@@ -106,7 +116,7 @@ export default function SetupPage() {
 
       <br />
 
-      <label>
+      <label style={{ display: "block", marginBottom: "8px" }}>
         <input
           type="radio"
           name="goal"
@@ -119,7 +129,7 @@ export default function SetupPage() {
 
       <br />
 
-      <label>
+      <label style={{ display: "block", marginBottom: "8px" }}>
         <input
           type="radio"
           name="goal"

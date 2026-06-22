@@ -200,7 +200,6 @@ export default function TodayPage() {
 
       <p>次回：Day{nextDay}</p>
       <p>推奨日：{nextRecommendedDay}</p>
-
       <p>推定時間：{estimatedTime}分</p>
 
       <p>
@@ -210,9 +209,20 @@ export default function TodayPage() {
         {goal === "diet" && "減量"}
       </p>
 
-      <button onClick={() => router.push("/setup")}>設定変更</button>
+      <button
+        onClick={() => router.push("/setup")}
+        style={{
+          padding: "8px 12px",
+          fontSize: "14px",
+          marginBottom: "16px",
+        }}
+      >
+        設定変更
+      </button>
 
       <br />
+      <br />
+      <hr />
       <br />
 
       <h2>
@@ -376,7 +386,17 @@ export default function TodayPage() {
       <br />
       <br />
 
-      <button onClick={completeWorkout}>完了</button>
+      <button
+        onClick={completeWorkout}
+        style={{
+          width: "100%",
+          padding: "16px",
+          fontSize: "20px",
+          fontWeight: "bold",
+        }}
+      >
+        完了
+      </button>
     </main>
   );
 }
