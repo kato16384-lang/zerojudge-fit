@@ -97,6 +97,45 @@ export default function TodayPage() {
   const deadliftWeight =
     Math.round((deadliftMax * multiplier) / 2.5) * 2.5;
 
+  const inclineWeight =
+    Math.round((benchWeight * 0.7) / 2.5) * 2.5;
+
+  const narrowWeight =
+    Math.round((benchWeight * 0.7) / 2.5) * 2.5;
+
+  const lyingWeight =
+    Math.round((narrowWeight * 0.6) / 2.5) * 2.5;
+
+  const latPullWeight =
+    Math.round((benchMax * 0.8) / 2.5) * 2.5;
+
+  const rowWeight =
+    Math.round((latPullWeight * 0.7) / 2.5) * 2.5;
+
+  const ezWeight =
+    Math.round((benchMax * 0.4) / 2.5) * 2.5;
+
+  const hammerWeight =
+    Math.round((ezWeight * 0.4) / 2.5) * 2.5;
+
+  const extensionWeight =
+    Math.round((squatMax * 0.4) / 2.5) * 2.5;
+
+  const legCurlWeight =
+    Math.round((squatMax * 0.35) / 2.5) * 2.5;
+
+  const bulgarianWeight =
+    Math.round((squatMax * 0.2) / 2.5) * 2.5;
+
+  const pullupTargetReps = Math.max(
+    3,
+    goal === "strength"
+      ? Math.round(pullupReps * 0.7)
+      : goal === "maintain"
+        ? Math.round(pullupReps * 0.6)
+        : Math.round(pullupReps * 0.5)
+  );
+
   const nextDay =
     frequency === "2"
       ? day === 1
@@ -249,7 +288,7 @@ export default function TodayPage() {
           <Exercise
             id="incline"
             name="インクラインダンベルプレス"
-            detail={`22kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${inclineWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
           <br />
 
@@ -263,14 +302,14 @@ export default function TodayPage() {
           <Exercise
             id="lying"
             name="ライイングエクステンション"
-            detail={`25kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${lyingWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
           <br />
 
           <Exercise
             id="narrow"
             name="ナローベンチプレス"
-            detail={`50kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${narrowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
         </>
       )}
@@ -287,7 +326,7 @@ export default function TodayPage() {
           <Exercise
             id="pullup"
             name="懸垂"
-            detail={`${pullupReps}回 x 4set`}
+            detail={`${pullupTargetReps}回 x 3set`}
           />
 
           <br />
@@ -312,7 +351,7 @@ export default function TodayPage() {
           <Exercise
             id="extension"
             name="レッグエクステンション"
-            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${extensionWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
 
           <br />
@@ -321,7 +360,7 @@ export default function TodayPage() {
           <Exercise
             id="curl"
             name="レッグカール"
-            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${legCurlWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
 
           <br />
@@ -329,7 +368,7 @@ export default function TodayPage() {
           <Exercise
             id="bulgarian"
             name="ブルガリアンスクワット"
-            detail={`${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${bulgarianWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
         </>
       )}
@@ -339,28 +378,28 @@ export default function TodayPage() {
           <Exercise
             id="pullup"
             name="懸垂"
-            detail={`${pullupReps}回 x 4set`}
+            detail={`${pullupTargetReps}回 x 4set`}
           />
           <br />
 
           <Exercise
             id="latpull"
             name="ラットプル"
-            detail={`80kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${latPullWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
           <br />
 
           <Exercise
             id="ezcurl"
             name="EZバーカール"
-            detail={`40kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${ezWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
           <br />
 
           <Exercise
             id="hammer"
             name="ハンマーカール"
-            detail={`16kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${hammerWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
         </>
       )}
@@ -378,7 +417,7 @@ export default function TodayPage() {
           <Exercise
             id="row"
             name="シーテッドロー"
-            detail={`50kg x ${accessoryReps}回 x ${accessorySets}set`}
+            detail={`${rowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
           />
         </>
       )}
