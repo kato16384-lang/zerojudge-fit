@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 export default function SetupPage() {
   const router = useRouter();
 
-  const [benchMax, setBenchMax] = useState("");
-  const [squatMax, setSquatMax] = useState("");
-  const [deadliftMax, setDeadliftMax] = useState("");
+  const [benchWeight, setBenchWeight] = useState("");
+  const [benchReps, setBenchReps] = useState("");
+  const [squatWeight, setSquatWeight] = useState("");
+  const [squatReps, setSquatReps] = useState("");
+  const [deadliftWeight, setDeadliftWeight] = useState("");
+  const [deadliftReps, setDeadliftReps] = useState("");
   const [pullupReps, setPullupReps] = useState("12");
   const [goal, setGoal] = useState("strength");
   const [days, setDays] = useState<string[]>([]);
@@ -31,17 +34,44 @@ export default function SetupPage() {
   };
   useEffect(() => {
 
-    const savedBenchMax = localStorage.getItem("benchMax");
-    const savedSquatMax = localStorage.getItem("squatMax");
-    const savedDeadliftMax = localStorage.getItem("deadliftMax");
+    const savedBenchWeight =
+      localStorage.getItem("benchWeight");
+
+    const savedBenchReps =
+      localStorage.getItem("benchReps");
+    const savedSquatWeight =
+      localStorage.getItem("squatWeight");
+
+    const savedSquatReps =
+      localStorage.getItem("squatReps");
+
+    const savedDeadliftWeight =
+      localStorage.getItem("deadliftWeight");
+
+    const savedDeadliftReps =
+      localStorage.getItem("deadliftReps");
     const savedGoal = localStorage.getItem("goal");
     const savedDays = localStorage.getItem("days");
     const savedPullupReps = localStorage.getItem("pullupReps");
 
 
-    if (savedBenchMax) setBenchMax(savedBenchMax);
-    if (savedSquatMax) setSquatMax(savedSquatMax);
-    if (savedDeadliftMax) setDeadliftMax(savedDeadliftMax);
+
+    if (savedBenchWeight)
+      setBenchWeight(savedBenchWeight);
+
+    if (savedBenchReps)
+      setBenchReps(savedBenchReps);
+    if (savedSquatWeight)
+      setSquatWeight(savedSquatWeight);
+
+    if (savedSquatReps)
+      setSquatReps(savedSquatReps);
+
+    if (savedDeadliftWeight)
+      setDeadliftWeight(savedDeadliftWeight);
+
+    if (savedDeadliftReps)
+      setDeadliftReps(savedDeadliftReps);
     if (savedGoal) setGoal(savedGoal);
 
     if (savedDays) {
@@ -58,49 +88,251 @@ export default function SetupPage() {
       alert("曜日は2日または3日選択してください");
       return;
     }
-    localStorage.setItem("benchMax", benchMax);
-    localStorage.setItem("squatMax", squatMax);
-    localStorage.setItem("deadliftMax", deadliftMax);
+    const estimatedBenchMax =
+      Math.round(
+        Number(benchWeight) *
+        (1 + Number(benchReps) / 30)
+      );
+
+    const estimatedSquatMax =
+      Math.round(
+        Number(squatWeight) *
+        (1 + Number(squatReps) / 30)
+      );
+
+    const estimatedDeadliftMax =
+      Math.round(
+        Number(deadliftWeight) *
+        (1 + Number(deadliftReps) / 30)
+      );
+    const currentMonth = new Date()
+      .toISOString()
+      .slice(0, 7);
+
+
+    localStorage.setItem(
+      "benchBaseMax",
+      String(estimatedBenchMax)
+    );
+
+    localStorage.setItem(
+      "benchTrainingMax",
+      String(estimatedBenchMax)
+    );
+
+    localStorage.setItem(
+      "benchWeight",
+      benchWeight
+    );
+
+    localStorage.setItem(
+      "benchReps",
+      benchReps
+    );
+    localStorage.setItem(
+      "squatBaseMax",
+      String(estimatedSquatMax)
+    );
+
+    localStorage.setItem(
+      "squatTrainingMax",
+      String(estimatedSquatMax)
+    );
+
+    localStorage.setItem(
+      "squatWeight",
+      squatWeight
+    );
+
+    localStorage.setItem(
+      "squatReps",
+      squatReps
+    );
+
+    localStorage.setItem(
+      "deadliftBaseMax",
+      String(estimatedDeadliftMax)
+    );
+
+    localStorage.setItem(
+      "deadliftTrainingMax",
+      String(estimatedDeadliftMax)
+    );
+
+    localStorage.setItem(
+      "deadliftWeight",
+      deadliftWeight
+    );
+
+    localStorage.setItem(
+      "deadliftReps",
+      deadliftReps
+    );
+
     localStorage.setItem("pullupReps", pullupReps);
 
     localStorage.setItem("goal", goal);
 
     localStorage.setItem("days", JSON.stringify(days));
 
+    localStorage.setItem(
+      `monthlyBenchMax_${currentMonth}`,
+      String(estimatedBenchMax)
+    );
+
+    localStorage.setItem(
+      `monthlySquatMax_${currentMonth}`,
+      String(estimatedSquatMax)
+    );
+
+    localStorage.setItem(
+      `monthlyDeadliftMax_${currentMonth}`,
+      String(estimatedDeadliftMax)
+    );
+
+    localStorage.setItem(
+      `monthlyPullup_${currentMonth}`,
+      pullupReps
+    );
+
+    localStorage.setItem(
+      "lastSetupMonth",
+      currentMonth
+    );
+
     router.push("/today");
   }
 
   return (
     <main>
-      <h1>目標設定</h1>
+      <h1>今の実績</h1>
 
-      <p>ベンチプレスMAX</p>
-      <input
-        type="number"
-        value={benchMax}
-        onChange={(e) => setBenchMax(e.target.value)}
-      />
+      <h2>ベンチプレス</h2>
 
-      <p>スクワットMAX</p>
-      <input
-        type="number"
-        value={squatMax}
-        onChange={(e) => setSquatMax(e.target.value)}
-      />
+      <div>
+        重量
+        <input
+          type="number"
+          value={benchWeight}
+          onChange={(e) =>
+            setBenchWeight(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        kg
 
-      <p>デッドリフトMAX</p>
-      <input
-        type="number"
-        value={deadliftMax}
-        onChange={(e) => setDeadliftMax(e.target.value)}
-      />
+        回数
 
-      <p>懸垂回数</p>
-      <input
-        type="number"
-        value={pullupReps}
-        onChange={(e) => setPullupReps(e.target.value)}
-      />
+        <input
+          type="number"
+          value={benchReps}
+          onChange={(e) =>
+            setBenchReps(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        rep
+      </div>
+
+      <p>
+        推定MAX
+        {
+          Math.round(
+            Number(benchWeight) *
+            (1 + Number(benchReps) / 30)
+          )
+        }kg
+      </p>
+
+      <h2>スクワット</h2>
+
+
+      <div>
+        重量
+        <input
+          type="number"
+          value={squatWeight}
+          onChange={(e) =>
+            setSquatWeight(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        kg
+
+        回数
+
+        <input
+          type="number"
+          value={squatReps}
+          onChange={(e) =>
+            setSquatReps(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        rep
+      </div>
+
+      <p>
+        推定MAX
+        {
+          Math.round(
+            Number(squatWeight) *
+            (1 + Number(squatReps) / 30)
+          )
+        }kg
+      </p>
+
+      <h2>デッドリフト</h2>
+
+
+
+      <div>
+        重量
+        <input
+          type="number"
+          value={deadliftWeight}
+          onChange={(e) =>
+            setDeadliftWeight(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        kg
+
+        回数
+
+        <input
+          type="number"
+          value={deadliftReps}
+          onChange={(e) =>
+            setDeadliftReps(e.target.value)
+          }
+          style={{ width: "80px" }}
+        />
+        rep
+      </div>
+
+      <p>
+        推定MAX
+        {
+          Math.round(
+            Number(deadliftWeight) *
+            (1 + Number(deadliftReps) / 30)
+          )
+        }kg
+      </p>
+
+      <h2>懸垂</h2>
+      <div>
+        MAX回数
+        <input
+          type="number"
+          value={pullupReps}
+          onChange={(e) => setPullupReps(e.target.value)}
+          style={{ width: "80px" }}
+        />
+        回
+      </div>
+
       <h2>目標</h2>
 
       <label style={{ display: "block", marginBottom: "8px" }}>
