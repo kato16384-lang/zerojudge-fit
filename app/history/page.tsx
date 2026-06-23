@@ -130,6 +130,23 @@ export default function HistoryPage() {
         0
     );
 
+    function deleteHistory(index: number) {
+    if (!confirm("この履歴を削除しますか？")) {
+        return;
+    }
+
+    const updatedHistory = history.filter(
+        (_, i) => i !== index
+    );
+
+    setHistory(updatedHistory);
+
+    localStorage.setItem(
+        "history",
+        JSON.stringify(updatedHistory)
+    );
+}
+
     return (
         <main style={{ padding: "20px" }}>
             <h1>実行履歴</h1>
@@ -197,6 +214,12 @@ export default function HistoryPage() {
                     {item.pullup && (
                         <p>懸垂: {item.pullup}回</p>
                     )}
+
+                    <button
+                        onClick={() => deleteHistory(index)}
+                    >
+                        削除
+                    </button>
                 </div>
             ))}
         </main>
