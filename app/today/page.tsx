@@ -425,6 +425,17 @@ export default function TodayPage() {
         履歴
       </button>
 
+      <button
+        onClick={() => router.push("/report")}
+        style={{
+          padding: "8px 12px",
+          fontSize: "14px",
+          marginLeft: "8px",
+        }}
+      >
+        成長レポート
+      </button>
+
       <br />
       <br />
       <hr />
