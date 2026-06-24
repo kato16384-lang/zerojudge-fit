@@ -349,6 +349,13 @@ export default function HistoryPage() {
                                     : "▶"}
                                 {" "}
                                 {item.date}
+                                (
+                                {
+                                    ["日", "月", "火", "水", "木", "金", "土"][
+                                    new Date(item.date).getDay()
+                                    ]
+                                }
+                                )
                                 {" "}
                                 {item.title}
                             </button>
@@ -369,13 +376,15 @@ export default function HistoryPage() {
                             )}
 
 
-                            <button
-                                onClick={() =>
-                                    deleteHistory(index)
-                                }
-                            >
-                                削除
-                            </button>
+                            {openHistoryIndex === index && (
+                                <button
+                                    onClick={() =>
+                                        deleteHistory(index)
+                                    }
+                                >
+                                    削除
+                                </button>
+                            )}
                         </div>
                     ))}
                 </>
@@ -482,7 +491,16 @@ export default function HistoryPage() {
                     {nextWorkouts.map(
                         (item, index) => (
                             <p key={index}>
-                                └ {item.date} {item.title}
+                                └ {item.date}
+                                (
+                                {
+                                    ["日", "月", "火", "水", "木", "金", "土"][
+                                    new Date(item.date).getDay()
+                                    ]
+                                }
+                                )
+                                {" "}
+                                {item.title}
                             </p>
                         )
                     )}
