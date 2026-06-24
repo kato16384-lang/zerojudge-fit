@@ -20,6 +20,7 @@ export default function TodayPage() {
   const [backType, setBackType] = useState("A");
   const [showFeedback, setShowFeedback] = useState(false);
 
+
   useEffect(() => {
     const savedBenchTrainingMax =
       localStorage.getItem("benchTrainingMax");
@@ -71,6 +72,7 @@ export default function TodayPage() {
     if (savedBackType) {
       setBackType(savedBackType);
     }
+
   }, []);
 
   const multiplier =
@@ -286,6 +288,24 @@ export default function TodayPage() {
 
   const updateWeight = (action: string) => {
 
+    const gender =
+      localStorage.getItem("gender") || "male";
+
+    const limits =
+      gender === "male"
+        ? {
+          bench: 50,
+          squat: 50,
+          deadlift: 50,
+          pullup: 5,
+        }
+        : {
+          bench: 20,
+          squat: 20,
+          deadlift: 20,
+          pullup: 0,
+        };
+
     saveHistory();
 
     let newBench = benchTrainingMax;
@@ -314,19 +334,57 @@ export default function TodayPage() {
 
     if (action === "down") {
 
-      if (day === 1) {
-        newBench -= 2.5;
+      const nextBenchWeight =
+        Math.round(
+          ((newBench - 2.5) * multiplier) / 2.5
+        ) * 2.5;
+
+      if (nextBenchWeight < limits.bench) {
+        alert(
+          "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+        );
+        return;
       }
 
       if (day === 2) {
+        const nextSquatWeight =
+          Math.round(
+            ((newSquat - 2.5) * multiplier) / 2.5
+          ) * 2.5;
+
+        if (nextSquatWeight < limits.squat) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+          );
+          return;
+        }
+
         newSquat -= 2.5;
       }
 
       if (day === 3 && backType === "A") {
-        newPullup = Math.max(1, newPullup - 1);
+        if (newPullup <= limits.pullup) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+          );
+          return;
+        }
+
+        newPullup -= 1;
       }
 
       if (day === 3 && backType === "B") {
+        const nextDeadliftWeight =
+          Math.round(
+            ((newDeadlift - 5) * multiplier) / 2.5
+          ) * 2.5;
+
+        if (nextDeadliftWeight < limits.deadlift) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+          );
+          return;
+        }
         newDeadlift -= 5;
       }
     }
@@ -373,7 +431,7 @@ export default function TodayPage() {
             window.location.reload();
           }}
         >
-          ← 前の日
+          ← 前のトレに変更
         </button>
 
         <button
@@ -388,7 +446,7 @@ export default function TodayPage() {
           }}
           style={{ marginLeft: "8px" }}
         >
-          次の日 →
+          次のトレに変更 →
         </button>
       </div>
 

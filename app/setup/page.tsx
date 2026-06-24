@@ -84,6 +84,50 @@ export default function SetupPage() {
 
 
   function saveAndGoNext() {
+    const gender =
+      localStorage.getItem("gender") || "male";
+
+    const limits =
+      gender === "male"
+        ? {
+          bench: 50,
+          squat: 50,
+          deadlift: 50,
+          pullup: 5,
+        }
+        : {
+          bench: 20,
+          squat: 20,
+          deadlift: 20,
+          pullup: 0,
+        };
+    if (Number(benchWeight) < limits.bench) {
+      alert(
+        "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+      );
+      return;
+    }
+
+    if (Number(squatWeight) < limits.squat) {
+      alert(
+        "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+      );
+      return;
+    }
+
+    if (Number(deadliftWeight) < limits.deadlift) {
+      alert(
+        "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって、50≦に設定しろって"
+      );
+      return;
+    }
+
+    if (Number(pullupReps) < limits.pullup) {
+      alert(
+        "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
+      );
+      return;
+    }
     if (days.length !== 2 && days.length !== 3) {
       alert("曜日は2日または3日選択してください");
       return;
@@ -395,6 +439,9 @@ export default function SetupPage() {
 
       <br />
       <br />
+      <button onClick={() => router.push("/profile")}>
+        ← 戻る
+      </button>
 
       <button onClick={saveAndGoNext}>メニュー作成</button>
     </main>
