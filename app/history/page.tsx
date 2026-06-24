@@ -8,10 +8,24 @@ export default function HistoryPage() {
 
     const [history, setHistory] = useState<any[]>([]);
     const [days, setDays] = useState<string[]>([]);
+    const [nextWorkouts, setNextWorkouts] = useState<any[]>([]);
+    const [showHistory, setShowHistory] =
+        useState(true);
+
+    const [showReport, setShowReport] =
+        useState(false);
+
+    const [showCompare, setShowCompare] =
+        useState(false);
+
+    const [showSchedule, setShowSchedule] =
+        useState(false);
     const [previousBench, setPreviousBench] = useState(0);
     const [previousSquat, setPreviousSquat] = useState(0);
     const [previousDeadlift, setPreviousDeadlift] = useState(0);
     const [previousPullup, setPreviousPullup] = useState(0);
+    const [openHistoryIndex, setOpenHistoryIndex] =
+        useState<number | null>(null);
 
     useEffect(() => {
         const savedHistory = JSON.parse(
@@ -23,6 +37,88 @@ export default function HistoryPage() {
         );
 
         setHistory(savedHistory.reverse());
+        const upcoming: any[] = [];
+
+        const dayMapReverse = [
+            "日",
+            "月",
+            "火",
+            "水",
+            "木",
+            "金",
+            "土",
+        ];
+
+        let nextDay =
+            Number(localStorage.getItem("day")) || 1;
+
+        let nextBackType =
+            localStorage.getItem("backType") || "A";
+
+        for (let i = 1; i <= 30; i++) {
+            const date = new Date();
+
+            date.setDate(
+                date.getDate() + i
+            );
+
+            const weekday =
+                dayMapReverse[date.getDay()];
+
+            if (
+                savedDays.includes(weekday)
+            ) {
+                let title = "";
+
+                if (nextDay === 1) {
+                    title =
+                        savedDays.length === 2
+                            ? "胸＋背中"
+                            : "胸＋上腕三頭筋";
+                }
+
+                if (nextDay === 2) {
+                    title = "脚";
+                }
+
+                if (nextDay === 3) {
+                    title =
+                        nextBackType === "A"
+                            ? "背中（広がり）＋上腕二頭筋"
+                            : "背中（厚み）";
+
+                    nextBackType =
+                        nextBackType === "A"
+                            ? "B"
+                            : "A";
+                }
+
+                upcoming.push({
+                    date:
+                        date
+                            .toISOString()
+                            .split("T")[0],
+                    title,
+                });
+
+                nextDay =
+                    savedDays.length === 2
+                        ? nextDay === 1
+                            ? 2
+                            : 1
+                        : nextDay === 3
+                            ? 1
+                            : nextDay + 1;
+
+                if (
+                    upcoming.length >= 5
+                ) {
+                    break;
+                }
+            }
+        }
+
+        setNextWorkouts(upcoming);
         setDays(savedDays);
         const previousDate = new Date();
         previousDate.setMonth(previousDate.getMonth() - 1);
@@ -220,75 +316,179 @@ export default function HistoryPage() {
 
             <h1>実行履歴</h1>
 
-            <h2>月間レポート</h2>
-            <p>{comment}</p>
+            <button
+                onClick={() =>
+                    setShowHistory(!showHistory)
+                }
+            >
+                {showHistory ? "▼" : "▶"} 履歴
+            </button>
 
-            <h3>先月比</h3>
+            {showHistory && (
+                <>
+                    {history.map((item, index) => (
+                        <div
+                            key={index}
+                            style={{
+                                border: "1px solid #ccc",
+                                padding: "12px",
+                                marginBottom: "12px",
+                            }}
+                        >
+                            <button
+                                onClick={() =>
+                                    setOpenHistoryIndex(
+                                        openHistoryIndex === index
+                                            ? null
+                                            : index
+                                    )
+                                }
+                            >
+                                {openHistoryIndex === index
+                                    ? "▼"
+                                    : "▶"}
+                                {" "}
+                                {item.date}
+                                {" "}
+                                {item.title}
+                            </button>
+
+                            {openHistoryIndex === index && (
+                                <>
+                                    {item.exercises?.map(
+                                        (
+                                            exercise: string,
+                                            i: number
+                                        ) => (
+                                            <p key={i}>
+                                                └ {exercise}
+                                            </p>
+                                        )
+                                    )}
+                                </>
+                            )}
 
 
+                            <button
+                                onClick={() =>
+                                    deleteHistory(index)
+                                }
+                            >
+                                削除
+                            </button>
+                        </div>
+                    ))}
+                </>
+            )}
+            <button
+                onClick={() =>
+                    setShowReport(!showReport)
+                }
+            >
+                {showReport ? "▼" : "▶"} 月間レポート
+            </button>
 
+            {showReport && (
+                <>
+                    <p>{comment}</p>
 
-            <p>
-                ベンチ：
-                {bestBench - previousBench > 0 ? "+" : ""}
-                {bestBench - previousBench}kg
-            </p>
+                    <p>
+                        評価：{rank}
+                    </p>
 
-            <p>
-                スクワット：
-                {bestSquat - previousSquat > 0 ? "+" : ""}
-                {bestSquat - previousSquat}kg
-            </p>
+                    <p>
+                        今月実施：
+                        {currentMonthCount}/{expectedCount}回
+                    </p>
 
-            <p>
-                デッド：
-                {bestDeadlift - previousDeadlift > 0 ? "+" : ""}
-                {bestDeadlift - previousDeadlift}kg
-            </p>
+                    <p>
+                        実行率：
+                        {executionRate}%
+                    </p>
 
-            <p>
-                懸垂：
-                {bestPullup - previousPullup > 0 ? "+" : ""}
-                {bestPullup - previousPullup}回
-            </p>
+                    <p>
+                        ベンチ最高：
+                        {bestBench}kg
+                    </p>
 
+                    <p>
+                        スクワット最高：
+                        {bestSquat}kg
+                    </p>
 
+                    <p>
+                        デッド最高：
+                        {bestDeadlift}kg
+                    </p>
 
-            <p>評価：{rank}</p>
+                    <p>
+                        懸垂最高：
+                        {bestPullup}回
+                    </p>
 
-            <p>
-                今月実施：
-                {currentMonthCount}/{expectedCount}回
-            </p>
+                    <p>
+                        累計実行：
+                        {history.length}回
+                    </p>
+                </>
+            )}
 
-            <p>
-                実行率：
-                {executionRate}%
-            </p>
+            <button
+                onClick={() =>
+                    setShowCompare(!showCompare)
+                }
+            >
+                {showCompare ? "▼" : "▶"} 先月比
+            </button>
 
-            <p>
-                ベンチ最高：
-                {bestBench}kg
-            </p>
+            {showCompare && (
+                <>
+                    <p>
+                        ベンチ：
+                        {bestBench - previousBench > 0 ? "+" : ""}
+                        {bestBench - previousBench}kg
+                    </p>
 
-            <p>
-                スクワット最高：
-                {bestSquat}kg
-            </p>
+                    <p>
+                        スクワット：
+                        {bestSquat - previousSquat > 0 ? "+" : ""}
+                        {bestSquat - previousSquat}kg
+                    </p>
 
-            <p>
-                デッド最高：
-                {bestDeadlift}kg
-            </p>
+                    <p>
+                        デッド：
+                        {bestDeadlift - previousDeadlift > 0 ? "+" : ""}
+                        {bestDeadlift - previousDeadlift}kg
+                    </p>
 
-            <p>
-                懸垂最高：
-                {bestPullup}回
-            </p>
+                    <p>
+                        懸垂：
+                        {bestPullup - previousPullup > 0 ? "+" : ""}
+                        {bestPullup - previousPullup}回
+                    </p>
+                </>
+            )}
 
-            <p>
-                累計実行：{history.length}回
-            </p>
+            <button
+                onClick={() =>
+                    setShowSchedule(!showSchedule)
+                }
+            >
+                {showSchedule ? "▼" : "▶"} 今後の予定
+            </button>
+
+            {showSchedule && (
+                <>
+                    {nextWorkouts.map(
+                        (item, index) => (
+                            <p key={index}>
+                                └ {item.date} {item.title}
+                            </p>
+                        )
+                    )}
+                </>
+            )}
+
 
             <hr />
 
@@ -296,36 +496,8 @@ export default function HistoryPage() {
                 onClick={() => router.push("/today")}
             >
                 ← 戻る
-
             </button>
 
-            {history.map((item, index) => (
-                <div
-                    key={index}
-                    style={{
-                        border: "1px solid #ccc",
-                        padding: "12px",
-                        marginBottom: "12px",
-                    }}
-                >
-                    <p>{item.date}</p>
-                    <p>{item.title}</p>
-                    {item.exercises?.map(
-                        (exercise: string, i: number) => (
-                            <p key={i}>{exercise}</p>
-                        )
-                    )}
-
-
-
-
-                    <button
-                        onClick={() => deleteHistory(index)}
-                    >
-                        削除
-                    </button>
-                </div>
-            ))}
         </main>
     );
 }

@@ -400,407 +400,429 @@ export default function TodayPage() {
       if (day === 3 && backType === "B") {
         newDeadlift += 5;
       }
-  }
-
-  if (action === "down") {
-
-    if (day === 1) {
-      const nextBenchWeight =
-        Math.round(
-          ((newBench - 2.5) * multiplier) / 2.5
-        ) * 2.5;
-
-      if (nextBenchWeight < limits.bench) {
-        alert(
-          "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
-        );
-        return;
-      }
-
-      newBench -= 2.5;
     }
 
-    if (day === 2) {
-      const nextSquatWeight =
-        Math.round(
-          ((newSquat - 2.5) * multiplier) / 2.5
-        ) * 2.5;
+    if (action === "down") {
 
-      if (nextSquatWeight < limits.squat) {
-        alert(
-          "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
-        );
-        return;
-      }
+      if (day === 1) {
+        const nextBenchWeight =
+          Math.round(
+            ((newBench - 2.5) * multiplier) / 2.5
+          ) * 2.5;
 
-      newSquat -= 2.5;
-    }
-
-    if (day === 3 && backType === "A") {
-      if (newPullup <= limits.pullup) {
-        alert(
-          "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
-        );
-        return;
-      }
-
-      newPullup -= 1;
-    }
-
-    if (day === 3 && backType === "B") {
-      const nextDeadliftWeight =
-        Math.round(
-          ((newDeadlift - 5) * multiplier) / 2.5
-        ) * 2.5;
-
-      if (nextDeadliftWeight < limits.deadlift) {
-        alert(
-          "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
-        );
-        return;
-      }
-
-      newDeadlift -= 5;
-    }
-  }
-
-  localStorage.setItem("benchTrainingMax", String(newBench));
-  localStorage.setItem("squatTrainingMax", String(newSquat));
-  localStorage.setItem("deadliftTrainingMax", String(newDeadlift));
-  localStorage.setItem("pullupReps", String(newPullup));
-
-  let nextDay;
-
-  if (frequency === "2") {
-    nextDay = day === 1 ? 2 : 1;
-  } else {
-    nextDay = day === 3 ? 1 : day + 1;
-  }
-
-  if (frequency === "3" && day === 3) {
-    const nextBackType = backType === "A" ? "B" : "A";
-    localStorage.setItem("backType", nextBackType);
-  }
-
-  localStorage.removeItem("checkedItems");
-  localStorage.setItem("day", String(nextDay));
-
-  window.location.reload();
-};
-
-
-
-return (
-  <main>
-    <h1>今日のメニュー（Day{day}）</h1>
-
-    <div style={{ marginBottom: "16px" }}>
-      <button
-        onClick={() => {
-          const prevDay =
-            frequency === "2"
-              ? day === 1 ? 2 : 1
-              : day === 1 ? 3 : day - 1;
-
-          localStorage.setItem("day", String(prevDay));
-          window.location.reload();
-        }}
-      >
-        ← 前のトレに変更
-      </button>
-
-      <button
-        onClick={() => {
-          const nextDay =
-            frequency === "2"
-              ? day === 1 ? 2 : 1
-              : day === 3 ? 1 : day + 1;
-
-          localStorage.setItem("day", String(nextDay));
-          window.location.reload();
-        }}
-        style={{ marginLeft: "8px" }}
-      >
-        次のトレに変更 →
-      </button>
-    </div>
-
-    <p>次回：Day{nextDay}</p>
-    <p>推奨日：{nextRecommendedDay}</p>
-    <p>推定時間：{estimatedTime}分</p>
-
-    <p>
-      目標：
-      {goal === "strength" && "重量更新"}
-      {goal === "maintain" && "維持"}
-      {goal === "diet" && "減量"}
-    </p>
-
-    <button
-      onClick={() => {
-        const result = confirm(
-          "設定を変更すると今までの成長記録に影響する可能性があります。\n\n本当に変更しますか？"
-        );
-
-        if (result) {
-          router.push("/setup");
+        if (nextBenchWeight < limits.bench) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
+          );
+          return;
         }
-      }}
-    >
-      設定変更
-    </button>
 
-    <button
-      onClick={() => router.push("/history")}
-      style={{
-        padding: "8px 12px",
-        fontSize: "14px",
-        marginLeft: "8px",
-      }}
-    >
-      履歴
-    </button>
+        newBench -= 2.5;
+      }
 
-    <button
-      onClick={() => router.push("/report")}
-      style={{
-        padding: "8px 12px",
-        fontSize: "14px",
-        marginLeft: "8px",
-      }}
-    >
-      成長レポート
-    </button>
+      if (day === 2) {
+        const nextSquatWeight =
+          Math.round(
+            ((newSquat - 2.5) * multiplier) / 2.5
+          ) * 2.5;
 
-    <br />
-    <br />
-    <hr />
-    <br />
+        if (nextSquatWeight < limits.squat) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
+          );
+          return;
+        }
 
-    <h2>
-      {day === 1 && frequency === "3" && "胸＋上腕三頭筋"}
-      {day === 1 && frequency === "2" && "胸＋背中"}
-      {day === 2 && "脚"}
+        newSquat -= 2.5;
+      }
 
-      {day === 3 && backType === "A" &&
-        "背中（広がり）＋上腕二頭筋"}
+      if (day === 3 && backType === "A") {
+        if (newPullup <= limits.pullup) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
+          );
+          return;
+        }
 
-      {day === 3 && backType === "B" &&
-        "背中（厚み）"}
-    </h2>
+        newPullup -= 1;
+      }
 
-    {day === 1 && frequency === "3" && (
-      <>
-        <Exercise
-          id="bench"
-          name="ベンチプレス"
-          detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
-        />
-        <br />
+      if (day === 3 && backType === "B") {
+        const nextDeadliftWeight =
+          Math.round(
+            ((newDeadlift - 5) * multiplier) / 2.5
+          ) * 2.5;
 
-        <Exercise
-          id="incline"
-          name="インクラインダンベルプレス"
-          detail={`${inclineWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-        <br />
+        if (nextDeadliftWeight < limits.deadlift) {
+          alert(
+            "弱いって、ただでさえ弱いのにこれ以上弱くなっていくの厳しいって"
+          );
+          return;
+        }
 
-        <Exercise
-          id="dips"
-          name="ディップス"
-          detail={`${accessoryReps}回 x ${accessorySets}set`}
-        />
-        <br />
-
-        <Exercise
-          id="lying"
-          name="ライイングエクステンション"
-          detail={`${lyingWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-        <br />
-
-        <Exercise
-          id="narrow"
-          name="ナローベンチプレス"
-          detail={`${narrowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-      </>
-    )}
-    {day === 1 && frequency === "2" && (
-      <>
-        <Exercise
-          id="bench"
-          name="ベンチプレス"
-          detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
-        />
-
-        <br />
-
-        <Exercise
-          id="pullup"
-          name="懸垂"
-          detail={`${pullupTargetReps}回 x 3set`}
-        />
-
-        <br />
-
-        <Exercise
-          id="dips"
-          name="ディップス"
-          detail={`${accessoryReps}回 x ${accessorySets}set`}
-        />
-      </>
-    )}
-
-    {day === 2 && (
-      <>
-        <Exercise
-          id="squat"
-          name="スクワット"
-          detail={`${squatWeight}kg x ${reps}回 x ${sets}set`}
-        />
-        <br />
-
-        <Exercise
-          id="extension"
-          name="レッグエクステンション"
-          detail={`${extensionWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-
-        <br />
-        <br />
-
-        <Exercise
-          id="curl"
-          name="レッグカール"
-          detail={`${legCurlWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-
-        <br />
-
-        <Exercise
-          id="bulgarian"
-          name="ブルガリアンスクワット"
-          detail={`${bulgarianWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-      </>
-    )}
-
-    {day === 3 && backType === "A" && (
-      <>
-        <Exercise
-          id="pullup"
-          name="懸垂"
-          detail={`${pullupTargetReps}回 x 4set`}
-        />
-        <br />
-
-        <Exercise
-          id="latpull"
-          name="ラットプル"
-          detail={`${latPullWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-        <br />
-
-        <Exercise
-          id="ezcurl"
-          name="EZバーカール"
-          detail={`${ezWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-        <br />
-
-        <Exercise
-          id="hammer"
-          name="ハンマーカール"
-          detail={`${hammerWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-      </>
-    )}
-
-    {day === 3 && backType === "B" && (
-      <>
-        <Exercise
-          id="deadlift"
-          name="デッドリフト"
-          detail={`${deadliftWeight}kg x ${reps}回 x ${sets}set`}
-        />
-
-        <br />
-
-        <Exercise
-          id="row"
-          name="シーテッドロー"
-          detail={`${rowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
-        />
-      </>
-    )}
-
-    <br />
-    <br />
-
-    <button
-      onClick={completeWorkout}
-      style={{
-        width: "100%",
-        padding: "16px",
-        fontSize: "20px",
-        fontWeight: "bold",
-      }}
-    >
-      完了
-    </button>
-
-    {
-      showFeedback && (
-        <>
-          <br />
-          <hr />
-          <h2>次回重量</h2>
-
-          <button
-            onClick={() => updateWeight("up")}
-            style={{
-              width: "100%",
-              padding: "16px",
-              fontSize: "18px",
-              marginBottom: "12px",
-            }}
-          >
-            ⬆ 上げる
-            <br />
-            今回は余裕だった
-          </button>
-
-          <button
-            onClick={() => updateWeight("keep")}
-            style={{
-              width: "100%",
-              padding: "16px",
-              fontSize: "18px",
-              marginBottom: "12px",
-            }}
-          >
-            ➡ そのまま継続
-            <br />
-            ちょうど良かった
-          </button>
-
-          <button
-            onClick={() => updateWeight("down")}
-            style={{
-              width: "100%",
-              padding: "16px",
-              fontSize: "18px",
-            }}
-          >
-            ⬇ 下げる
-            <br />
-            重すぎた
-          </button>
-        </>
-      )
+        newDeadlift -= 5;
+      }
     }
 
-  </main>
-);
+    localStorage.setItem("benchTrainingMax", String(newBench));
+    localStorage.setItem("squatTrainingMax", String(newSquat));
+    localStorage.setItem("deadliftTrainingMax", String(newDeadlift));
+    localStorage.setItem("pullupReps", String(newPullup));
+    const currentMonth =
+      new Date().toISOString().slice(0, 7);
+
+    localStorage.setItem(
+      `monthlyBenchMax_${currentMonth}`,
+      String(newBench)
+    );
+
+    localStorage.setItem(
+      `monthlySquatMax_${currentMonth}`,
+      String(newSquat)
+    );
+
+    localStorage.setItem(
+      `monthlyDeadliftMax_${currentMonth}`,
+      String(newDeadlift)
+    );
+
+    localStorage.setItem(
+      `monthlyPullup_${currentMonth}`,
+      String(newPullup)
+    );
+
+    let nextDay;
+
+    if (frequency === "2") {
+      nextDay = day === 1 ? 2 : 1;
+    } else {
+      nextDay = day === 3 ? 1 : day + 1;
+    }
+
+    if (frequency === "3" && day === 3) {
+      const nextBackType = backType === "A" ? "B" : "A";
+      localStorage.setItem("backType", nextBackType);
+    }
+
+    localStorage.removeItem("checkedItems");
+    localStorage.setItem("day", String(nextDay));
+
+    window.location.reload();
+  };
+
+
+
+  return (
+    <main>
+      <h1>今日のメニュー（Day{day}）</h1>
+
+      <div style={{ marginBottom: "16px" }}>
+        <button
+          onClick={() => {
+            const prevDay =
+              frequency === "2"
+                ? day === 1 ? 2 : 1
+                : day === 1 ? 3 : day - 1;
+
+            localStorage.setItem("day", String(prevDay));
+            window.location.reload();
+          }}
+        >
+          ← 前のトレに変更
+        </button>
+
+        <button
+          onClick={() => {
+            const nextDay =
+              frequency === "2"
+                ? day === 1 ? 2 : 1
+                : day === 3 ? 1 : day + 1;
+
+            localStorage.setItem("day", String(nextDay));
+            window.location.reload();
+          }}
+          style={{ marginLeft: "8px" }}
+        >
+          次のトレに変更 →
+        </button>
+      </div>
+
+      <p>次回：Day{nextDay}</p>
+      <p>推奨日：{nextRecommendedDay}</p>
+      <p>推定時間：{estimatedTime}分</p>
+
+      <p>
+        目標：
+        {goal === "strength" && "重量更新"}
+        {goal === "maintain" && "維持"}
+        {goal === "diet" && "減量"}
+      </p>
+
+      <button
+        onClick={() => {
+          const result = confirm(
+            "設定を変更すると今までの成長記録に影響する可能性があります。\n\n本当に変更しますか？"
+          );
+
+          if (result) {
+            router.push("/setup");
+          }
+        }}
+      >
+        設定変更
+      </button>
+
+      <button
+        onClick={() => router.push("/history")}
+        style={{
+          padding: "8px 12px",
+          fontSize: "14px",
+          marginLeft: "8px",
+        }}
+      >
+        履歴
+      </button>
+
+      <button
+        onClick={() => router.push("/report")}
+        style={{
+          padding: "8px 12px",
+          fontSize: "14px",
+          marginLeft: "8px",
+        }}
+      >
+        成長レポート
+      </button>
+
+      <br />
+      <br />
+      <hr />
+      <br />
+
+      <h2>
+        {day === 1 && frequency === "3" && "胸＋上腕三頭筋"}
+        {day === 1 && frequency === "2" && "胸＋背中"}
+        {day === 2 && "脚"}
+
+        {day === 3 && backType === "A" &&
+          "背中（広がり）＋上腕二頭筋"}
+
+        {day === 3 && backType === "B" &&
+          "背中（厚み）"}
+      </h2>
+
+      {day === 1 && frequency === "3" && (
+        <>
+          <Exercise
+            id="bench"
+            name="ベンチプレス"
+            detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="incline"
+            name="インクラインダンベルプレス"
+            detail={`${inclineWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="dips"
+            name="ディップス"
+            detail={`${accessoryReps}回 x ${accessorySets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="lying"
+            name="ライイングエクステンション"
+            detail={`${lyingWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="narrow"
+            name="ナローベンチプレス"
+            detail={`${narrowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+        </>
+      )}
+      {day === 1 && frequency === "2" && (
+        <>
+          <Exercise
+            id="bench"
+            name="ベンチプレス"
+            detail={`${benchWeight}kg x ${reps}回 x ${sets}set`}
+          />
+
+          <br />
+
+          <Exercise
+            id="pullup"
+            name="懸垂"
+            detail={`${pullupTargetReps}回 x 3set`}
+          />
+
+          <br />
+
+          <Exercise
+            id="dips"
+            name="ディップス"
+            detail={`${accessoryReps}回 x ${accessorySets}set`}
+          />
+        </>
+      )}
+
+      {day === 2 && (
+        <>
+          <Exercise
+            id="squat"
+            name="スクワット"
+            detail={`${squatWeight}kg x ${reps}回 x ${sets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="extension"
+            name="レッグエクステンション"
+            detail={`${extensionWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+
+          <br />
+          <br />
+
+          <Exercise
+            id="curl"
+            name="レッグカール"
+            detail={`${legCurlWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+
+          <br />
+
+          <Exercise
+            id="bulgarian"
+            name="ブルガリアンスクワット"
+            detail={`${bulgarianWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+        </>
+      )}
+
+      {day === 3 && backType === "A" && (
+        <>
+          <Exercise
+            id="pullup"
+            name="懸垂"
+            detail={`${pullupTargetReps}回 x 4set`}
+          />
+          <br />
+
+          <Exercise
+            id="latpull"
+            name="ラットプル"
+            detail={`${latPullWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="ezcurl"
+            name="EZバーカール"
+            detail={`${ezWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+          <br />
+
+          <Exercise
+            id="hammer"
+            name="ハンマーカール"
+            detail={`${hammerWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+        </>
+      )}
+
+      {day === 3 && backType === "B" && (
+        <>
+          <Exercise
+            id="deadlift"
+            name="デッドリフト"
+            detail={`${deadliftWeight}kg x ${reps}回 x ${sets}set`}
+          />
+
+          <br />
+
+          <Exercise
+            id="row"
+            name="シーテッドロー"
+            detail={`${rowWeight}kg x ${accessoryReps}回 x ${accessorySets}set`}
+          />
+        </>
+      )}
+
+      <br />
+      <br />
+
+      <button
+        onClick={completeWorkout}
+        style={{
+          width: "100%",
+          padding: "16px",
+          fontSize: "20px",
+          fontWeight: "bold",
+        }}
+      >
+        完了
+      </button>
+
+      {
+        showFeedback && (
+          <>
+            <br />
+            <hr />
+            <h2>次回重量</h2>
+
+            <button
+              onClick={() => updateWeight("up")}
+              style={{
+                width: "100%",
+                padding: "16px",
+                fontSize: "18px",
+                marginBottom: "12px",
+              }}
+            >
+              ⬆ 上げる
+              <br />
+              今回は余裕だった
+            </button>
+
+            <button
+              onClick={() => updateWeight("keep")}
+              style={{
+                width: "100%",
+                padding: "16px",
+                fontSize: "18px",
+                marginBottom: "12px",
+              }}
+            >
+              ➡ そのまま継続
+              <br />
+              ちょうど良かった
+            </button>
+
+            <button
+              onClick={() => updateWeight("down")}
+              style={{
+                width: "100%",
+                padding: "16px",
+                fontSize: "18px",
+              }}
+            >
+              ⬇ 下げる
+              <br />
+              重すぎた
+            </button>
+          </>
+        )
+      }
+
+    </main>
+  );
 }
