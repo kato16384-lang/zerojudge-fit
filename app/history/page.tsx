@@ -8,6 +8,10 @@ export default function HistoryPage() {
 
     const [history, setHistory] = useState<any[]>([]);
     const [days, setDays] = useState<string[]>([]);
+    const [previousBench, setPreviousBench] = useState(0);
+    const [previousSquat, setPreviousSquat] = useState(0);
+    const [previousDeadlift, setPreviousDeadlift] = useState(0);
+    const [previousPullup, setPreviousPullup] = useState(0);
 
     useEffect(() => {
         const savedHistory = JSON.parse(
@@ -20,6 +24,43 @@ export default function HistoryPage() {
 
         setHistory(savedHistory.reverse());
         setDays(savedDays);
+        const previousDate = new Date();
+        previousDate.setMonth(previousDate.getMonth() - 1);
+
+        const previousMonth =
+            previousDate.toISOString().slice(0, 7);
+
+        setPreviousBench(
+            Number(
+                localStorage.getItem(
+                    `monthlyBenchMax_${previousMonth}`
+                )
+            ) || 0
+        );
+
+        setPreviousSquat(
+            Number(
+                localStorage.getItem(
+                    `monthlySquatMax_${previousMonth}`
+                )
+            ) || 0
+        );
+
+        setPreviousDeadlift(
+            Number(
+                localStorage.getItem(
+                    `monthlyDeadliftMax_${previousMonth}`
+                )
+            ) || 0
+        );
+
+        setPreviousPullup(
+            Number(
+                localStorage.getItem(
+                    `monthlyPullup_${previousMonth}`
+                )
+            ) || 0
+        );
     }, []);
 
     const currentMonthCount = history.filter(
@@ -130,55 +171,126 @@ export default function HistoryPage() {
         0
     );
 
+    const rank =
+        executionRate >= 90
+            ? "S"
+            : executionRate >= 80
+                ? "A"
+                : executionRate >= 70
+                    ? "B"
+                    : executionRate >= 60
+                        ? "C"
+                        : "D";
+
+    const comment =
+        rank === "S"
+            ? "やるやんけ。まあ来月も続くかって話やけどな。"
+            : rank === "A"
+                ? "順調やんけ。けどSランクとれてないのはカスカスのカス。"
+                : rank === "B"
+                    ? "まあどんだけ土台が良くても所詮【B】しかとれない有象無象の一人よなあ。。。。"
+                    : rank === "C"
+                        ? "厳しいって、もう30手前やって、ぶくぶく醜いストレージ漁り三十路は救えんって、本気出せって"
+                        : "";
+
+
+
+
+
+
     function deleteHistory(index: number) {
-    if (!confirm("この履歴を削除しますか？")) {
-        return;
+        if (!confirm("この履歴を削除しますか？")) {
+            return;
+        }
+
+        const updatedHistory = history.filter(
+            (_, i) => i !== index
+        );
+
+        setHistory(updatedHistory);
+
+        localStorage.setItem(
+            "history",
+            JSON.stringify(updatedHistory)
+        );
     }
-
-    const updatedHistory = history.filter(
-        (_, i) => i !== index
-    );
-
-    setHistory(updatedHistory);
-
-    localStorage.setItem(
-        "history",
-        JSON.stringify(updatedHistory)
-    );
-}
 
     return (
         <main style={{ padding: "20px" }}>
+
             <h1>実行履歴</h1>
 
+            <h2>月間レポート</h2>
+            <p>{comment}</p>
+
+            <h3>先月比</h3>
+
+
+
+
             <p>
-                今月実行：
+                ベンチ：
+                {bestBench - previousBench > 0 ? "+" : ""}
+                {bestBench - previousBench}kg
+            </p>
+
+            <p>
+                スクワット：
+                {bestSquat - previousSquat > 0 ? "+" : ""}
+                {bestSquat - previousSquat}kg
+            </p>
+
+            <p>
+                デッド：
+                {bestDeadlift - previousDeadlift > 0 ? "+" : ""}
+                {bestDeadlift - previousDeadlift}kg
+            </p>
+
+            <p>
+                懸垂：
+                {bestPullup - previousPullup > 0 ? "+" : ""}
+                {bestPullup - previousPullup}回
+            </p>
+
+
+
+            <p>評価：{rank}</p>
+
+            <p>
+                今月実施：
                 {currentMonthCount}/{expectedCount}回
+            </p>
+
+            <p>
+                実行率：
+                {executionRate}%
+            </p>
+
+            <p>
+                ベンチ最高：
+                {bestBench}kg
+            </p>
+
+            <p>
+                スクワット最高：
+                {bestSquat}kg
+            </p>
+
+            <p>
+                デッド最高：
+                {bestDeadlift}kg
+            </p>
+
+            <p>
+                懸垂最高：
+                {bestPullup}回
             </p>
 
             <p>
                 累計実行：{history.length}回
             </p>
 
-            <p>
-                実行率：{executionRate}%
-            </p>
-
-            <p>
-                ベンチ最高：{bestBench}kg
-            </p>
-
-            <p>
-                スクワット最高：{bestSquat}kg
-            </p>
-
-            <p>
-                デッド最高：{bestDeadlift}kg
-            </p>
-
-            <p>
-                懸垂最高：{bestPullup}回
-            </p>
+            <hr />
 
             <button
                 onClick={() => router.push("/today")}
@@ -198,22 +310,14 @@ export default function HistoryPage() {
                 >
                     <p>{item.date}</p>
                     <p>{item.title}</p>
-
-                    {item.bench && (
-                        <p>ベンチ: {item.bench}kg</p>
+                    {item.exercises?.map(
+                        (exercise: string, i: number) => (
+                            <p key={i}>{exercise}</p>
+                        )
                     )}
 
-                    {item.squat && (
-                        <p>スクワット: {item.squat}kg</p>
-                    )}
 
-                    {item.deadlift && (
-                        <p>デッド: {item.deadlift}kg</p>
-                    )}
 
-                    {item.pullup && (
-                        <p>懸垂: {item.pullup}回</p>
-                    )}
 
                     <button
                         onClick={() => deleteHistory(index)}
